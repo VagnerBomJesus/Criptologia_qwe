@@ -12,6 +12,7 @@ from core.user_mgmt import (
 )
 from core.config import escolher_metodo, get_metodo, get_tcp_params
 from core.crypto import cifrar_mensagem
+from core.blockchain import add_action
 from vpn import vpn_client, vpn_server
 
 def start_background_services():
@@ -119,6 +120,7 @@ def enviar_mensagem():
         mensagem = input("Mensagem a enviar: ")
         print(f"\nMensagem original: {mensagem}")
         udp_sock.sendto(mensagem.encode(), destino)
+        add_action(f"send_message:{mensagem}")
 
         print(f"Mensagem cifrada enviada via VPN.")
         nova = input("Deseja enviar outra mensagem? (s/n): ").strip().lower()

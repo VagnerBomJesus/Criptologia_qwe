@@ -1,14 +1,14 @@
 import os
 import getpass
 from core.crypto import caesar_encrypt, caesar_decrypt
+from core.blockchain import add_action
 
 FICHEIRO_UTILIZADORES = "assets/utilizadores.txt"
 
+
 def ler_utilizadores():
-    # Verifica se o ficheiro existe, senão cria com admin cifrado
     if not os.path.exists(FICHEIRO_UTILIZADORES):
         with open(FICHEIRO_UTILIZADORES, "w") as f:
-            # Password 'admin123' cifrada com Caesar shift 3
             password_cifrada = caesar_encrypt("admin123", 3)
             f.write(f"admin;{password_cifrada};admin\n")
     utilizadores = {}
@@ -21,10 +21,20 @@ def ler_utilizadores():
 
 
 def guardar_utilizador(username, password, role):
-    # Usa shift 3 para cifrar (podes tornar configurável se quiseres)
     password_cifrada = caesar_encrypt(password, 3)
     with open(FICHEIRO_UTILIZADORES, "a") as f:
         f.write(f"{username};{password_cifrada};{role}\n")
+    add_action(f"create_user:{username}")
+
+
+def verificar_credenciais(username: str, password: str):
+    users = ler_utilizadores()
+    user = users.get(username)
+    if not user:
+        return None
+    if caesar_decrypt(user["password"], 3) == password:
+        return user["role"]
+    return None
 
 
 def login():
@@ -32,21 +42,17 @@ def login():
     while True:
         print("\n=== Ecrã de Login ===")
         username = input("Username: ")
-        # Usa getpass para que a password n\xE3o fique vis\xEDvel no terminal
         password = getpass.getpass("Password: ")
-        user = utilizadores.get(username)
-        if user:
-            password_decifrada = caesar_decrypt(user["password"], 3)
-            if password_decifrada == password:
-                print(f"Login bem-sucedido como {user['role'].capitalize()}")
-                return username, user["role"]
+        role = verificar_credenciais(username, password)
+        if role:
+            print(f"Login bem-sucedido como {role.capitalize()}")
+            add_action(f"login:{username}")
+            return username, role
         print("Login inválido.")
         tentar_novamente = input("Deseja tentar novamente? (s/n): ").strip().lower()
         if tentar_novamente != "s":
             return None, None
 
-
-import getpass
 
 def registar_utilizador():
     print("\n=== Registar Novo Utilizador ===")
@@ -74,7 +80,6 @@ def registar_utilizador():
     print(f"Utilizador {username} ({role}) criado com sucesso.")
 
 
-
 def escrever_utilizadores(utilizadores):
     with open(FICHEIRO_UTILIZADORES, "w") as f:
         for u, info in utilizadores.items():
@@ -91,6 +96,7 @@ def remover_utilizador(username):
         del utilizadores[username]
         escrever_utilizadores(utilizadores)
         print(f"Utilizador {username} removido.")
+        add_action(f"remove_user:{username}")
     else:
         print("Utilizador não encontrado.")
 
@@ -101,5 +107,6 @@ def alterar_role(username, novo_role):
         utilizadores[username]["role"] = novo_role
         escrever_utilizadores(utilizadores)
         print(f"Role de {username} atualizado para {novo_role}.")
+        add_action(f"change_role:{username}:{novo_role}")
     else:
         print("Utilizador não encontrado.")
