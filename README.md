@@ -39,84 +39,93 @@ A VPN é composta por:
   * `hashlib`
   * `random`
 
+## Estrutura do Projeto
+
+O repositório segue uma organização simples para facilitar a execução dos
+componentes. Os diretórios principais são:
+
+```
+.
+├── core/        # Módulos partilhados (configuração, criptografia, gestão de utilizadores)
+├── vpn/         # Cliente e servidor VPN sobre TCP
+├── udp/         # Clientes UDP de exemplo
+├── tests/       # Testes unitários em PyTest
+├── assets/      # Diagramas e imagens
+├── main.py      # Script que lança todo o sistema de forma integrada
+└── requirements.txt
+```
+
+Cada módulo pode ser executado isoladamente ou através do `main.py` que arranca
+o servidor VPN, o cliente VPN e o receptor UDP de forma automática.
+
 ## Como correr o projeto
 
-1. **Clonar o repositório:**
+1. **Clone o repositório e instale as dependências**
 
    ```bash
    git clone https://github.com/diogoJsaraiva/Criptologia.git
    cd Criptologia
+   pip install -r requirements.txt
    ```
 
-2. **Abrir 3 terminais separados e correr:**
+2. **Execução rápida**
 
-   * Terminal 1: **Servidor TCP (VPN Server)**
+   Em um único terminal, pode iniciar todos os serviços necessários através do
+   script principal:
+
+   ```bash
+   python main.py
+   ```
+
+   O `main.py` arranca o servidor VPN, o cliente VPN e o `prog_udp2.py` em
+   segundo plano, apresentando de seguida o menu de autenticação.
+
+3. **Execução manual (opcional)**
+
+   Caso prefira, pode abrir vários terminais e executar cada componente
+   separadamente:
+
+   * Terminal 1 – Servidor VPN
 
      ```bash
-     PYTHONPATH=.
      python vpn/vpn_server.py
      ```
 
-   * Terminal 2: **Cliente VPN (VPN Client)**
+   * Terminal 2 – Cliente VPN
 
      ```bash
-     PYTHONPATH=.
      python vpn/vpn_client.py
      ```
 
-   * Terminal 3: **Cliente UDP 2**
+   * Terminal 3 – Cliente UDP receptor
 
      ```bash
      python udp/prog_udp2.py
      ```
-    * Terminal 4: **Cliente UDP 1**
 
-        ```bash
-        python main.py
-        ```
-    ---
+   Depois utilize o `main.py` ou o `prog_udp1.py` para enviar mensagens.
 
-    ## Como correr esta versão dos Menus
+4. **Primeiro acesso ao menu**
 
-    1. **Abre 3 terminais na pasta do projeto.**
+   Ao iniciar `main.py` será pedido login. Os dados padrão são:
 
-    2. **No primeiro terminal, corre o servidor UDP (ProgUDP2):**
-        ```bash
-        python udp/prog_udp2.py
-        ```
+   * Utilizador: `admin`
+   * Password: `admin123`
 
-    3. **No segundo terminal, corre o servidor VPN:**
-        ```bash
-        python vpn/vpn_server.py
-        ```
+   O administrador pode registar novos utilizadores, alterar métodos de
+   cifra e enviar mensagens. Utilizadores do tipo "user" apenas enviam
+   mensagens.
 
-    4. **No terceiro terminal, corre o menu principal (autenticação, menus, envio):**
-        ```bash
-        python main.py
-        ```
+## Como correr os testes
 
-    - **Ao iniciares o `main.py`, vais ver o ecrã de login.**
-        - Usa o utilizador padrão na primeira execução:
-          - **Username:** `admin`
-          - **Password:** `admin123`
-    - **Se entrares como admin:**
-        - Podes criar novos utilizadores (admin ou user)
-        - Alterar o método de cifra (Caesar Cipher, podes definir o shift)
-        - Enviar mensagens (vão cifradas via VPN)
-    - **Se entrares como user:**
-        - Só podes enviar mensagens
-
-    ## Como correr os testes
-
-    1. Instale as dependências:
-      ```bash
-      pip install -r requirements.txt
-      ```
-    2. Execute o conjunto de testes a partir da raiz (ou de qualquer
-      subdiretório) com o **pytest**:
-      ```bash
-      python -m pytest -q
-      ```
+1. Instale as dependências:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Execute a suíte de testes a partir da raiz do projeto com o **pytest**:
+   ```bash
+   python -m pytest -q
+   ```
 
 3. **Interação Admin/User:**
 
@@ -135,11 +144,18 @@ A VPN é composta por:
 * Interface de login e distinção Admin/User
 * Configuração de métodos criptográficos
 
-## Organização por fases (conforme especificação IPG)
+## Organização por Fases
 
-* **Fase 1:** Mockups, interfaces, menus, registo de admins 
-* **Fase 2:** Criptografia simétrica, hash, configuração de parâmetros 
-* **Fase 3:** Registo em estrutura imutável (blockchain), GUI avançada 
+O projeto está planeado em três grandes etapas conforme a metodologia usada na
+UC de Criptologia:
+
+* **Fase&nbsp;1** – Constituição das equipas e definição de requisitos. Produção
+  de mockups, primeiros menus e suporte a múltiplos administradores.
+* **Fase&nbsp;2** – Implementação das funcionalidades críticas: cifra de César
+  generalizada, troca de chave Diffie-Hellman e outros métodos de encriptação,
+  bem como consulta de parâmetros TCP.
+* **Fase&nbsp;3** – Funcionalidades avançadas, nomeadamente o registo de ações em
+  blockchain simples e eventual interface gráfica.
 
 ## Autores
 
