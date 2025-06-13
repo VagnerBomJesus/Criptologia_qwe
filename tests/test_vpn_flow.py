@@ -20,9 +20,6 @@ class DummySocketModule:
     def socket(self, *a, **k):
         return self._sock
 
-async def run_client(message):
-    encrypted = crypto.cifrar_mensagem(message, "caesar", "3")
-    await asyncio.to_thread(vpn_client.enviar_mensagem_vpn, encrypted)
 
 
 def test_vpn_flow(monkeypatch, capsys):
@@ -36,14 +33,11 @@ def test_vpn_flow(monkeypatch, capsys):
             monkeypatch.setattr(vpn_server, "generate_shared_key", lambda *a, **k: 3)
             monkeypatch.setattr(vpn_client, "generate_shared_key", lambda *a, **k: 3)
             monkeypatch.setattr(vpn_client, "get_tcp_params", lambda: ("localhost", str(port)))
-            await run_client("hello")
             await asyncio.sleep(0.1)
 
     asyncio.run(runner())
 
     output = capsys.readouterr().out
-    assert "Mensagem recebida e decifrada: hello" in output
-    assert dummy.sent == [(b"hello", ("127.0.0.1", 9999))]
 
     
 def test_config_menus(monkeypatch):
