@@ -135,7 +135,18 @@ o servidor VPN, o cliente VPN e o receptor UDP de forma automática.
       * Listar, remover e alterar permissões dos utilizadores
       * Mudar os modos de criptografia
       * Enviar mensagens criptografadas
-   * O User apenas tem acesso ao envio de mensagens
+    * O User apenas tem acesso ao envio de mensagens
+
+## Blockchain e Interface Gráfica
+
+O sistema regista ações (login, criação de utilizadores e envio de mensagens)
+num ficheiro de blockchain simples localizado em `assets/blockchain.json`.
+
+Para experimentar uma interface gráfica básica criada com Tkinter execute:
+
+```bash
+python gui.py
+```
 
 ## Estado do Projeto
 
@@ -143,6 +154,8 @@ o servidor VPN, o cliente VPN e o receptor UDP de forma automática.
 * Criptografia Cifra de César + Diffie-Hellman
 * Interface de login e distinção Admin/User
 * Configuração de métodos criptográficos
+* Registo de ações em blockchain simples
+* Interface gráfica opcional
 
 ## Organização por Fases
 
@@ -155,7 +168,7 @@ UC de Criptologia:
   generalizada, troca de chave Diffie-Hellman e outros métodos de encriptação,
   bem como consulta de parâmetros TCP.
 * **Fase&nbsp;3** – Funcionalidades avançadas, nomeadamente o registo de ações em
-  blockchain simples e eventual interface gráfica.
+  blockchain simples e interface gráfica.
 
 ## Autores
 

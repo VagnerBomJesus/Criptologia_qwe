@@ -40,6 +40,7 @@ eggs/
 assets/config.txt
 assets/utilizadores.txt
 assets/tcp_params.txt
+assets/blockchain.json
 
 # Exclude backups, logs, temp files
 *.log
