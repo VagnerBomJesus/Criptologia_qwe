@@ -97,6 +97,10 @@ def simple_hash(mensagem):
 def calcular_hash_sha256(mensagem: str) -> str:
     return hashlib.sha256(mensagem.encode()).hexdigest()
 
+def calcular_hash(mensagem: str) -> str:
+    """Wrapper para hashlib.sha256 para compatibilidade."""
+    return calcular_hash_sha256(mensagem)
 def verificar_hash(mensagem: str, hash_recebido: str) -> bool:
-    hash_calculado = calcular_hash_sha256(mensagem)
+    #hash_calculado = calcular_hash_sha256(mensagem)
+    hash_calculado = calcular_hash(mensagem)
     return hash_calculado == hash_recebido

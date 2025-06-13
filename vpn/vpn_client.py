@@ -18,7 +18,9 @@ from core.crypto import (
     generate_shared_key,
     generate_public_key,
     generate_private_key,
-    calcular_hash_sha256
+    calcular_hash_sha256,
+    decifrar_mensagem,
+    cifrar_mensagem,
 )
 from core.config import get_metodo, get_tcp_params
 
@@ -50,6 +52,31 @@ async def udp_listener():
     return sock
 
 
+def enviar_mensagem_vpn(mensagem: str) -> None:
+    """Utilitário síncrono para enviar uma mensagem já cifrada para o servidor."""
+
+    async def _send(msg: str):
+        global shared_key
+        host, port = get_tcp_params()
+        url = f"ws://{host}:{port}"
+
+        async with websockets.connect(url) as websocket:
+            await websocket.send(str(public_key))
+            server_pub_key = int(await websocket.recv())
+            shared_key = generate_shared_key(server_pub_key, private_key, prime)
+
+            metodo, extra = get_metodo()
+            texto_original = decifrar_mensagem(msg, metodo, extra)
+            hash_msg = calcular_hash_sha256(texto_original)
+
+            await websocket.send(json.dumps({
+                "mensagem": msg,
+                "hash": hash_msg,
+            }))
+
+    asyncio.run(_send(mensagem))
+
+    
 async def vpn_client():
     """Listen on UDP and forward datagrams encrypted to the VPN server."""
     global shared_key

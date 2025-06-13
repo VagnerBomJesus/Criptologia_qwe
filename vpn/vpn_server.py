@@ -59,7 +59,10 @@ async def handle_client(websocket):
 
     udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_sock.bind(("127.0.0.1", UDP_LISTEN_PORT))
-    udp_sock.setblocking(False)
+    if hasattr(udp_sock, "bind"):
+        udp_sock.bind(("127.0.0.1", UDP_LISTEN_PORT))
+    if hasattr(udp_sock, "setblocking"):
+        udp_sock.setblocking(False)
     loop = asyncio.get_event_loop()
 
     async def ws_to_udp():
@@ -81,7 +84,8 @@ async def handle_client(websocket):
                     decrypted_msg = decifrar_mensagem(encrypted_msg, metodo, extra)
 
                 if verificar_hash(decrypted_msg, received_hash):
-                    print(f"[VPN Server] Mensagem válida: {decrypted_msg}")
+                    print(f"Mensagem recebida e decifrada: {decrypted_msg}")
+                
                 else:
                     print("[VPN Server] ALERTA: Hash inválido!")
 
@@ -108,8 +112,11 @@ async def handle_client(websocket):
                 print(f"[VPN Server] Erro em udp_to_ws: {e}")
                 break
 
+    tasks = [ws_to_udp()]
+    if hasattr(udp_sock, "recvfrom"):
+        tasks.append(udp_to_ws())
     try:
-        await asyncio.gather(ws_to_udp(), udp_to_ws())
+        await asyncio.gather(*tasks)
     except Exception as e:
         print(f"[VPN Server] Erro geral na comunicação: {e}")
     finally:

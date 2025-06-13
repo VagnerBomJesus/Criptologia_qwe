@@ -170,7 +170,7 @@ def main():
 
 if __name__ == "__main__":
     # Arranca os serviços de background (VPN server e UDP receiver)
-    processes = start_background_services()
+    processes = "" #start_background_services()
     try:
         main()
     finally:
